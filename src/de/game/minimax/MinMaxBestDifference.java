@@ -1,3 +1,5 @@
+package de.game.minimax;
+
 public class MinMaxBestDifference {
 
     private Game game;

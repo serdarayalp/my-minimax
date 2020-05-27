@@ -1,0 +1,126 @@
+values = {2, 8, 3, 5, 4, 1};
+
+
+
+**************** SCHLEIFE - PLAYER - A: 1
+PLAYER-A - MOVE: FIRST: 2
+
+**************** SCHLEIFE - PLAYER - B: 1
+PLAYER-B - MOVE: FIRST: 8
+
+**************** SCHLEIFE - PLAYER - A: 2
+PLAYER-A - MOVE: FIRST: 3
+
+**************** SCHLEIFE - PLAYER - B: 2
+PLAYER-B - MOVE: FIRST: 5
+SCORE: 3
+
+
+**************** SCHLEIFE - PLAYER - B: 3
+PLAYER-B - MOVE: LAST: 1
+SCORE: 1
+
+
+**************** SCHLEIFE - PLAYER - A: 3
+PLAYER-A - MOVE: LAST: 1
+
+**************** SCHLEIFE - PLAYER - B: 4
+PLAYER-B - MOVE: FIRST: 3
+SCORE: 1
+
+
+**************** SCHLEIFE - PLAYER - B: 5
+PLAYER-B - MOVE: LAST: 4
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - B: 6
+PLAYER-B - MOVE: LAST: 1
+
+**************** SCHLEIFE - PLAYER - A: 4
+PLAYER-A - MOVE: FIRST: 8
+
+**************** SCHLEIFE - PLAYER - B: 7
+PLAYER-B - MOVE: FIRST: 3
+SCORE: 1
+
+
+**************** SCHLEIFE - PLAYER - B: 8
+PLAYER-B - MOVE: LAST: 4
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - A: 5
+PLAYER-A - MOVE: LAST: 4
+
+**************** SCHLEIFE - PLAYER - B: 9
+PLAYER-B - MOVE: FIRST: 8
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - B: 10
+PLAYER-B - MOVE: LAST: 5
+SCORE: 5
+
+
+**************** SCHLEIFE - PLAYER - A: 6
+PLAYER-A - MOVE: LAST: 1
+
+**************** SCHLEIFE - PLAYER - B: 11
+PLAYER-B - MOVE: FIRST: 2
+
+**************** SCHLEIFE - PLAYER - A: 7
+PLAYER-A - MOVE: FIRST: 8
+
+**************** SCHLEIFE - PLAYER - B: 12
+PLAYER-B - MOVE: FIRST: 3
+SCORE: 1
+
+
+**************** SCHLEIFE - PLAYER - B: 13
+PLAYER-B - MOVE: LAST: 4
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - A: 8
+PLAYER-A - MOVE: LAST: 4
+
+**************** SCHLEIFE - PLAYER - B: 14
+PLAYER-B - MOVE: FIRST: 8
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - B: 15
+PLAYER-B - MOVE: LAST: 5
+SCORE: 5
+
+
+**************** SCHLEIFE - PLAYER - B: 16
+PLAYER-B - MOVE: LAST: 4
+
+**************** SCHLEIFE - PLAYER - A: 9
+PLAYER-A - MOVE: FIRST: 2
+
+**************** SCHLEIFE - PLAYER - B: 17
+PLAYER-B - MOVE: FIRST: 8
+SCORE: -2
+
+
+**************** SCHLEIFE - PLAYER - B: 18
+PLAYER-B - MOVE: LAST: 5
+SCORE: 5
+
+
+**************** SCHLEIFE - PLAYER - A: 10
+PLAYER-A - MOVE: LAST: 5
+
+**************** SCHLEIFE - PLAYER - B: 19
+PLAYER-B - MOVE: FIRST: 2
+SCORE: 5
+
+
+**************** SCHLEIFE - PLAYER - B: 20
+PLAYER-B - MOVE: LAST: 3
+SCORE: -6
+
+-2

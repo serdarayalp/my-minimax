@@ -1,3 +1,5 @@
+package de.game.minimax;
+
 public class Game {
 
     private int[] values;
