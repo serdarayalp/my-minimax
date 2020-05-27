@@ -2,6 +2,7 @@ package de.game.tictactoe;
 
 import java.util.Random;
 
+// http://www.codebytes.in/2014/11/alpha-beta-pruning-minimax-algorithm.html
 public class Main {
 
     public static void main(String[] args) {
