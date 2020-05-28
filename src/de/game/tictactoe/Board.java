@@ -126,7 +126,8 @@ class Board {
 
         if (depth == 0) rootsChildrenScore.clear();
 
-        int maxValue = Integer.MIN_VALUE, minValue = Integer.MAX_VALUE;
+        int maxValue = Integer.MIN_VALUE;
+        int minValue = Integer.MAX_VALUE;
 
         for (int i = 0; i < pointsAvailable.size(); ++i) {
             Point point = pointsAvailable.get(i);
@@ -236,9 +237,6 @@ class Board {
         return score;
     }
 
-    // *********************************************************
-
-
     private int changeInScore(int X, int O) {
         int change;
         if (X == 3) {
@@ -258,6 +256,8 @@ class Board {
         }
         return change;
     }
+
+    // *********************************************************
 
     public Point returnBestMove() {
         int MAX = -100000;
