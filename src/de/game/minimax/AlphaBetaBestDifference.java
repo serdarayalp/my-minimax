@@ -59,14 +59,39 @@ public class AlphaBetaBestDifference {
         return beta;
     }
 
+    public int alphaBetaNegamax() {
+        return scorePlayer(1, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+    }
+
+    public int scorePlayer(int player, int alpha, int beta) {
+
+        if (game.isFinal()) {
+            return player * game.score();
+        }
+        for (int move : Game.moves) {
+            game.doMove(move, "PLAYER (" + player + ")");
+            int score = -scorePlayer(-player, -beta, -alpha);
+            game.undoMove(move, "PLAYER (" + player + ")");
+            if (score > alpha) {
+                alpha = score;
+                if (alpha >= beta) break;
+            }
+        }
+        return alpha;
+    }
+
     public static void main(String[] args) {
 
         int[] values = {2, 8, 3, 5, 4, 1};
 
         AlphaBetaBestDifference bd = new AlphaBetaBestDifference(values);
 
+        int bestScore = bd.alphaBetaNegamax();
+        System.out.println(bestScore);
+
+        /*
         int bestScoreA = bd.scorePlayerA(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        System.out.println(bestScoreA);
+        System.out.println(bestScoreA);*/
 
         /*int bestScoreB = bd.scorePlayerB();
         System.out.println(bestScoreB);*/
