@@ -55,21 +55,55 @@ class Board {
     }
 
     public boolean isWon(int player) {
-        int b00 = board[0][0];
-        int b11 = board[1][1];
-        int b22 = board[2][2];
 
-        int b02 = board[0][2];
-        int b20 = board[2][0];
+        int n = 3;
+        int counter = 0;
 
-        if ((b00 == b11 && b00 == b22 && b00 == player) ||
-                (b02 == b11 && b02 == b20 && b02 == player)) {
+        int x = 0;
+        int y = 0;
+        for (; x < n; x++, y++) {
+            if (board[x][y] == player) {
+                counter++;
+            }
+        }
+        if (counter == n) {
             return true;
         }
 
-        for (int i = 0; i < 3; ++i) {
-            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == player) ||
-                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == player)) {
+        counter = 0;
+
+        x = 0;
+        y = n - 1;
+        for (; x < 3; x++, y--) {
+            if (board[x][y] == player) {
+                counter++;
+            }
+        }
+
+        if (counter == n) {
+            return true;
+        }
+
+        for (x = 0; x < n; x++) {
+            counter = 0;
+            for (y = 0; y < n; y++) {
+                if (board[x][y] == player) {
+                    counter++;
+                }
+            }
+            if (counter == n) {
+                return true;
+            }
+        }
+
+        for (y = 0; y < n; y++) {
+            counter = 0;
+            for (x = 0; x < n; x++) {
+                if (board[x][y] == player) {
+                    counter++;
+                }
+            }
+            if (counter == n) {
                 return true;
             }
         }
@@ -108,6 +142,37 @@ class Board {
         return childrenScoreList.get(bestPosition).point;
     }
 
+    /*
+        Beta ist die minimale Obergrenze der möglichen Lösungen
+		Alpha ist die maximale Untergrenze der möglichen Lösungen
+
+		Wenn also ein neuer Knoten als möglicher Weg zur Lösung in Betracht gezogen wird,
+		kann er nur funktionieren, wenn er funktioniert:
+
+	        alpha <= N <= beta
+
+        wobei N die aktuelle Schätzung des Wertes des Knotens ist.
+
+        Im weiteren Verlauf des Problems können wir davon ausgehen, dass der Bereich der möglichen Lösungen
+        durch Min-Knoten (die eine obere Grenze setzen können) und Max-Knoten (die eine untere Grenze setzen können)
+        eingeschränkt wird. Wenn wir uns durch den Suchbaum bewegen, nähern sich diese Schranken normalerweise
+        immer mehr an:
+
+        Irgendwann bei der Bewertung eines Knotens können wir feststellen, dass er eine der Grenzen so
+        verschoben hat, dass es keine Überschneidung zwischen den Bereichen Alpha und Beta mehr gibt:
+
+        Zum jetzigen Zeitpunkt wissen wir, dass dieser Knoten niemals zu einem Lösungsweg führen könnte,
+        den wir in Betracht ziehen werden, so dass wir die Verarbeitung dieses Knotens einstellen könnten.
+        Mit anderen Worten, wir hören auf, seine Kinder zu erzeugen und gehen zurück zu seinem Elternknoten.
+        Für den Wert dieses Knotens sollten wir den von uns geänderten Wert, der über die andere Grenze hinausging,
+        an den übergeordneten Knoten weitergeben.
+
+        Max-Knoten können nur Einschränkungen für die untere Grenze vornehmen. Beachten Sie weiterhin,
+        dass Werte, die im Baum nach unten weitergegeben werden, aber nicht auf dem
+        Weg nach oben. Stattdessen wird der Endwert von Beta in einem Min-Knoten weitergegeben, um möglicherweise den
+        Alpha-Wert seines übergeordneten Knotens zu ändern. Ebenso wird der Endwert von Alpha in einem Max-Knoten
+        weitergegeben, um möglicherweise den Beta-Wert seines übergeordneten Knotens zu ändern.
+     */
     public int alphaBeta(int alpha, int beta, int player, int depth) {
 
         if (beta <= alpha) {
@@ -158,13 +223,13 @@ class Board {
 
                 doMove(point, Board.USER);
 
-                score = alphaBeta(alpha, beta, 1, depth + 1);
+                score = alphaBeta(alpha, beta, Board.COMPUTER, depth + 1);
 
                 minValue = Math.min(minValue, score);
 
                 beta = Math.min(score, beta);
             }
-            //reset board
+
             board[point.x][point.y] = 0;
 
             //If a pruning has been done, don't evaluate the rest of the sibling states

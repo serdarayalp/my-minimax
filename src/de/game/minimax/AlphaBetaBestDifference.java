@@ -65,18 +65,36 @@ public class AlphaBetaBestDifference {
 
     public int scorePlayer(int player, int alpha, int beta) {
 
+        System.out.println("++++++++++++++++++++++++ AKTUELLE WERTE: ALPHA: " + alpha + ", BETA: " + beta);
+
         if (game.isFinal()) {
             return player * game.score();
         }
         for (int move : Game.moves) {
+
             game.doMove(move, "PLAYER (" + player + ")");
             int score = -scorePlayer(-player, -beta, -alpha);
+            System.out.println("SCORE ist: " + score + " und ein UNDO für Player: " + player);
             game.undoMove(move, "PLAYER (" + player + ")");
+
+
+            System.out.println("*************** BEGIN ******************");
+            System.out.println("PLAYER: "  + player);
+            System.out.println("AKTUELLE WERTE: SCORE: " + score + ", ALPHA: " + alpha + ", BETA: " + beta);
             if (score > alpha) {
+                System.out.println("SCORE > ALPHA");
                 alpha = score;
-                if (alpha >= beta) break;
+                System.out.println("ALPHA ERSETZT DURCH SCORE");
+                System.out.println("NEUE WERTE: SCORE: " + score + ", ALPHA: " + alpha + ", BETA: " + beta);
+                if (alpha >= beta) {
+                    System.out.println("ALPHA >= BETA >>>>>>>> BREAK bzw. PRUNING");
+                    break;
+                }
+                System.out.println("*************** ENDE *****************");
             }
         }
+        System.out.println(">>>>>>>>>>>>>>>>> ALPHA ZURÜCKGEBEN: " + alpha);
+
         return alpha;
     }
 
