@@ -1,11 +1,11 @@
 package de.game.tictactoe;
 
-public class PointsAndScores {
+public class PositionScore {
 
     int score;
     Point point;
 
-    public PointsAndScores(int score, Point point) {
+    public PositionScore(int score, Point point) {
         this.score = score;
         this.point = point;
     }

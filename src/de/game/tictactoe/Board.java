@@ -6,12 +6,16 @@ import java.util.Scanner;
 
 class Board {
 
+    public static final int EMPTY = 0;
+    public static final int COMPUTER = 1;
+    public static final int USER = 2;
+
     List<Point> availablePoints;
     Scanner scan = new Scanner(System.in);
 
     int[][] board = new int[3][3];
 
-    List<PointsAndScores> rootsChildrenScore = new ArrayList<>();
+    List<PositionScore> childrenScoreList = new ArrayList<>();
 
     /*
     Setzen Sie diesen Wert auf irgendeinen Wert, wenn Sie eine bestimmte
@@ -38,20 +42,19 @@ class Board {
         }
     }
 
-    public void placeAMove(Point point, int player) {
-        board[point.x][point.y] = player;   // player = 1 for X, 2 for O
+    public void doMove(Point point, int player) {
+        board[point.x][point.y] = player;
     }
 
     public boolean isGameOver() {
         // Das Spiel ist zu Ende, wenn jemand gewonnen hat,
         // oder das Brett voll ist (Unentschieden)
-        return hasXWon() ||
-                hasOWon() ||
+        return isWon(Board.COMPUTER) ||
+                isWon(Board.USER) ||
                 getAvailableStates().isEmpty();
     }
 
-    public boolean hasXWon() {
-
+    public boolean isWon(int player) {
         int b00 = board[0][0];
         int b11 = board[1][1];
         int b22 = board[2][2];
@@ -59,30 +62,14 @@ class Board {
         int b02 = board[0][2];
         int b20 = board[2][0];
 
-        if ((b00 == b11 && b00 == b22 && b00 == 1) ||
-                (b02 == b11 && b02 == b20 && b02 == 1)) {
+        if ((b00 == b11 && b00 == b22 && b00 == player) ||
+                (b02 == b11 && b02 == b20 && b02 == player)) {
             return true;
         }
 
         for (int i = 0; i < 3; ++i) {
-            if (((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == 1)
-                    || (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == 1))) {
-                // System.out.println("X Row or Column win");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasOWon() {
-        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == 2) || (board[0][2] == board[1][1] && board[0][2] == board[2][0] && board[0][2] == 2)) {
-            // System.out.println("O Diagonal Win");
-            return true;
-        }
-        for (int i = 0; i < 3; ++i) {
-            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == 2)
-                    || (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == 2)) {
-                //  System.out.println("O Row or Column win");
+            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == player) ||
+                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == player)) {
                 return true;
             }
         }
@@ -105,11 +92,31 @@ class Board {
         return availablePoints;
     }
 
-    public int alphaBetaMinimax(int alpha, int beta, int depth, int turn) {
+    public Point getBestMove() {
+
+        int MAX = Integer.MIN_VALUE;
+        int bestPosition = -1;
+
+        for (int i = 0; i < childrenScoreList.size(); i++) {
+            int score = childrenScoreList.get(i).score;
+            if (MAX < score) {
+                MAX = score;
+                bestPosition = i;
+            }
+        }
+
+        return childrenScoreList.get(bestPosition).point;
+    }
+
+    public int alphaBeta(int alpha, int beta, int player, int depth) {
 
         if (beta <= alpha) {
-            System.out.println("Alpha-Beta-Pruning in der Tiefe = " + depth);
-            if (turn == 1) {
+            /*
+            Wenn Integer.MIN_VALUE oder Integer.MAX_VALUE für einen Knoten zurückgegeben wird,
+            wissen wir, dass eine Alpha-Beta-Pruning vorgenommen wurde und wir möchten
+            Geschwister nicht mehr auswerten.
+            */
+            if (player == Board.COMPUTER) {
                 return Integer.MAX_VALUE;
             } else {
                 return Integer.MIN_VALUE;
@@ -124,120 +131,126 @@ class Board {
 
         if (pointsAvailable.isEmpty()) return 0;
 
-        if (depth == 0) rootsChildrenScore.clear();
+        if (depth == 0) childrenScoreList.clear();
 
         int maxValue = Integer.MIN_VALUE;
         int minValue = Integer.MAX_VALUE;
 
-        for (int i = 0; i < pointsAvailable.size(); ++i) {
-            Point point = pointsAvailable.get(i);
+        for (Point point : pointsAvailable) {
 
-            int currentScore = 0;
+            int score = 0;
 
-            if (turn == 1) {
-                placeAMove(point, 1);
-                currentScore = alphaBetaMinimax(alpha, beta, depth + 1, 2);
-                maxValue = Math.max(maxValue, currentScore);
+            if (player == Board.COMPUTER) {
 
-                //Set alpha
-                alpha = Math.max(currentScore, alpha);
+                doMove(point, Board.COMPUTER);
 
-                if (depth == 0)
-                    rootsChildrenScore.add(new PointsAndScores(currentScore, point));
-            } else if (turn == 2) {
-                placeAMove(point, 2);
-                currentScore = alphaBetaMinimax(alpha, beta, depth + 1, 1);
-                minValue = Math.min(minValue, currentScore);
+                score = alphaBeta(alpha, beta, Board.USER, depth + 1);
 
-                //Set beta
-                beta = Math.min(currentScore, beta);
+                maxValue = Math.max(maxValue, score);
+
+                alpha = Math.max(score, alpha);
+
+                if (depth == 0) {
+                    childrenScoreList.add(new PositionScore(score, point));
+                }
+
+            } else if (player == Board.USER) {
+
+                doMove(point, Board.USER);
+
+                score = alphaBeta(alpha, beta, 1, depth + 1);
+
+                minValue = Math.min(minValue, score);
+
+                beta = Math.min(score, beta);
             }
             //reset board
             board[point.x][point.y] = 0;
 
             //If a pruning has been done, don't evaluate the rest of the sibling states
-            if (currentScore == Integer.MAX_VALUE || currentScore == Integer.MIN_VALUE) break;
+            if (score == Integer.MAX_VALUE || score == Integer.MIN_VALUE) break;
         }
-        return turn == 1 ? maxValue : minValue;
+
+        return player == Board.COMPUTER
+                ? maxValue
+                : minValue;
     }
 
     public int evaluateBoard() {
 
         int score = 0;
 
-        for (int i = 0; i < 3; ++i) {
+        int empty = 0;
+        int computer = 0;
+        int user = 0;
 
-            int blank = 0;
-            int X = 0;
-            int O = 0;
-
-            for (int j = 0; j < 3; ++j) {
-                if (board[i][j] == 0) {
-                    blank++;
-                } else if (board[i][j] == 1) {
-                    X++;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == Board.USER) {
+                    user++;
+                } else if (board[i][j] == Board.COMPUTER) {
+                    computer++;
                 } else {
-                    O++;
+                    empty++;
                 }
             }
-            score += changeInScore(X, O);
+            score = score + changeScore(computer, user);
         }
 
-        //Check all columns
         for (int j = 0; j < 3; ++j) {
-            int blank = 0;
-            int X = 0;
-            int O = 0;
+
+            empty = 0;
+            computer = 0;
+            user = 0;
+
             for (int i = 0; i < 3; ++i) {
-                if (board[i][j] == 0) {
-                    blank++;
-                } else if (board[i][j] == 1) {
-                    X++;
+                if (board[i][j] == Board.COMPUTER) {
+                    computer++;
+                } else if (board[i][j] == Board.USER) {
+                    user++;
                 } else {
-                    O++;
+                    empty++;
                 }
             }
-            score += changeInScore(X, O);
+            score = score + changeScore(computer, user);
         }
 
-        int blank = 0;
-        int X = 0;
-        int O = 0;
+        empty = 0;
+        computer = 0;
+        user = 0;
 
-        //Check diagonal (first)
         for (int i = 0, j = 0; i < 3; ++i, ++j) {
-            if (board[i][j] == 1) {
-                X++;
-            } else if (board[i][j] == 2) {
-                O++;
+            if (board[i][j] == Board.COMPUTER) {
+                computer++;
+            } else if (board[i][j] == Board.USER) {
+                user++;
             } else {
-                blank++;
+                empty++;
             }
         }
 
-        score += changeInScore(X, O);
+        score = score + changeScore(computer, user);
 
-        blank = 0;
-        X = 0;
-        O = 0;
+        empty = 0;
+        computer = 0;
+        user = 0;
 
-        //Check Diagonal (Second)
-        for (int i = 2, j = 0; i > -1; --i, ++j) {
-            if (board[i][j] == 1) {
-                X++;
-            } else if (board[i][j] == 2) {
-                O++;
+        for (int i = 2, j = 0; i >= 0; --i, ++j) {
+            if (board[i][j] == Board.COMPUTER) {
+                computer++;
+            } else if (board[i][j] == Board.USER) {
+                user++;
             } else {
-                blank++;
+                empty++;
             }
         }
 
-        score += changeInScore(X, O);
+        score = score + changeScore(computer, user);
 
         return score;
     }
 
-    private int changeInScore(int X, int O) {
+    private int changeScore(int X, int O) {
         int change;
         if (X == 3) {
             change = 100;
@@ -257,27 +270,4 @@ class Board {
         return change;
     }
 
-    // *********************************************************
-
-    public Point returnBestMove() {
-        int MAX = -100000;
-        int best = -1;
-
-        for (int i = 0; i < rootsChildrenScore.size(); ++i) {
-            if (MAX < rootsChildrenScore.get(i).score) {
-                MAX = rootsChildrenScore.get(i).score;
-                best = i;
-            }
-        }
-
-        return rootsChildrenScore.get(best).point;
-    }
-
-    void takeHumanInput() {
-        System.out.println("Your move: ");
-        int x = scan.nextInt();
-        int y = scan.nextInt();
-        Point point = new Point(x, y);
-        placeAMove(point, 2);
-    }
 }

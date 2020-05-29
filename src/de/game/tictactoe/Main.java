@@ -13,6 +13,7 @@ public class Main {
 
         b.displayBoard();
 
+        /*
         System.out.println("Wer soll zuerst starten: 1 - Computer oder 2 - User: ");
         int choice = b.scan.nextInt();
 
@@ -21,33 +22,40 @@ public class Main {
             b.placeAMove(p, 1);
             b.displayBoard();
         }
+         */
+
+        Point p = new Point(rand.nextInt(3), rand.nextInt(3));
+        b.doMove(p, Board.COMPUTER);
+        b.displayBoard();
 
         while (!b.isGameOver()) {
 
-            System.out.println("[Ihr Zug] Eingabe: X Y");
+            System.out.println("[Ihr Zug]: X Y");
 
             Point userMove = new Point(b.scan.nextInt(), b.scan.nextInt());
 
-            b.placeAMove(userMove, 2); //2 for O and O is the user
+            b.doMove(userMove, Board.USER);
             b.displayBoard();
 
             if (b.isGameOver()) break;
 
-            b.alphaBetaMinimax(Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 1);
+            b.alphaBeta(Integer.MIN_VALUE, Integer.MAX_VALUE, Board.COMPUTER, 0);
 
-            for (PointsAndScores pas : b.rootsChildrenScore)
+            for (PositionScore pas : b.childrenScoreList) {
                 System.out.println("Point: " + pas.point + " Score: " + pas.score);
+            }
 
-            b.placeAMove(b.returnBestMove(), 1);
+            b.doMove(b.getBestMove(), Board.COMPUTER);
+
             b.displayBoard();
         }
 
-        if (b.hasXWon()) {
-            System.out.println("Unfortunately, you lost!");
-        } else if (b.hasOWon()) {
-            System.out.println("You win!");
+        if (b.isWon(1)) {
+            System.out.println("Sie haben verloren.");
+        } else if (b.isWon(2)) {
+            System.out.println("Sie haben gewonnen.");
         } else {
-            System.out.println("It's a draw!");
+            System.out.println("Unentschieden!");
         }
     }
 }
